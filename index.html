@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigator Object Display</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 2%;
+        }
+
+        #user-agent {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            /* Preserves spacing and line breaks */
+            /* max-width: 80%; */
+            overflow-x: auto;
+            /* Adds horizontal scroll if needed */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            /* Adds horizontal scroll if needed */
+            display: flex;
+            justify-content: center;
+            /* width: 50%; */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="user-agent">Loading user agent...</div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody id="navigator-properties">
+                <!-- Navigator properties will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function formatValue(value) {
+            if (typeof value === 'object') {
+                try {
+                    return JSON.stringify(value, null, 2); // Format object as JSON
+                } catch (e) {
+                    return String(value); // Fallback in case of circular references
+                }
+            }
+            return String(value); // Convert to string for other types
+        }
+
+        function displayNavigatorInfo() {
+            const propertiesTable = document.getElementById('navigator-properties');
+            propertiesTable.innerHTML = ''; // Clear previous content
+
+            const allowedNavigatorProperties = ["vendorSub",
+                "productSub",
+                "vendor",
+                "appCodeName",
+                "appName",
+                "appVersion",
+                "platform",
+                "product",
+                "userAgent",
+                "language",]
+
+            for (const key in navigator) {
+                if (!allowedNavigatorProperties.includes(key)) {
+                    continue;
+                }
+                const row = document.createElement('tr');
+                const cellKey = document.createElement('td');
+                const cellValue = document.createElement('td');
+
+                cellKey.textContent = key;
+                cellValue.textContent = formatValue(navigator[key]);
+
+                row.appendChild(cellKey);
+                row.appendChild(cellValue);
+                propertiesTable.appendChild(row);
+            }
+        }
+
+        window.onload = displayNavigatorInfo;
+        const userAgent = navigator.userAgent;
+        document.getElementById('user-agent').innerHTML = `<b>User Agent:</b> ${userAgent}`;
+    </script>
+</body>
+
+</html>
